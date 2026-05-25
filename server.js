@@ -17,17 +17,25 @@ app.get("/health", (req, res) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   try {
-    const { packageType } = req.body;
+    // Merr packageId ose packageType
+    const { packageId, packageType } = req.body;
+
+    const selectedPackage = packageId || packageType;
 
     let amount = 490;
 
-    if (packageType === "plus") {
+    // PLUS
+    if (selectedPackage === "plus") {
       amount = 990;
     }
 
-    if (packageType === "premium") {
+    // PREMIUM
+    if (selectedPackage === "premium") {
       amount = 1490;
     }
+
+    console.log("PACKAGE:", selectedPackage);
+    console.log("AMOUNT:", amount);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
@@ -42,6 +50,7 @@ app.post("/create-payment-intent", async (req, res) => {
       paymentIntent: paymentIntent.client_secret,
       paymentIntentClientSecret: paymentIntent.client_secret,
     });
+
   } catch (error) {
     console.error(error);
 
